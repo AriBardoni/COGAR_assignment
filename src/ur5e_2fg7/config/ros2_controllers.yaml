@@ -1,0 +1,53 @@
+# Controller manager to pass from a controller to another
+controller_manager:
+  ros__parameters:
+    update_rate: 500 # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    
+    fts_broadcaster:
+      type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
+
+    # Arm controller
+    ur_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    # gripper controllers
+    gripper_position_controller:
+      type: position_controllers/JointGroupPositionController
+    
+    gripper_force_controller:
+      type: effort_controllers/JointGroupEffortController
+
+# --- Configuration ---
+
+ur_arm_controller:
+  ros__parameters:
+    joints:
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+gripper_position_controller:
+  ros__parameters:
+    joints:
+      - gripper_gripper_joint
+    
+gripper_force_controller:
+  ros__parameters:
+    joints:
+      - gripper_gripper_joint
+
+fts_broadcaster:
+  ros__parameters:
+    sensor_name: gripper_base_joint # Must be the same as the tag <sensor> in the URDF
+    frame_id: tool0
