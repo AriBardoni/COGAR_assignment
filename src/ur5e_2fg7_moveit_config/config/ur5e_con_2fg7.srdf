@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="ur5e_con_2fg7">
+    <group name="ur_manipulator">
+        <chain base_link="base_link" tip_link="tool0"/>
+    </group>
+    <virtual_joint name="fixed_base" type="fixed" parent_frame="world" child_link="base_link"/>
+    <disable_collisions link1="base_link_inertia" link2="shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="forearm_link" link2="upper_arm_link" reason="Adjacent"/>
+    <disable_collisions link1="forearm_link" link2="wrist_1_link" reason="Adjacent"/>
+    <disable_collisions link1="forearm_link" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="gripper_base_link" link2="left_finger_pad" reason="Adjacent"/>
+    <disable_collisions link1="gripper_base_link" link2="right_finger_pad" reason="Adjacent"/>
+    <disable_collisions link1="gripper_base_link" link2="wrist_1_link" reason="Never"/>
+    <disable_collisions link1="gripper_base_link" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="gripper_base_link" link2="wrist_3_link" reason="Adjacent"/>
+    <disable_collisions link1="left_finger_pad" link2="right_finger_pad" reason="Never"/>
+    <disable_collisions link1="left_finger_pad" link2="wrist_1_link" reason="Never"/>
+    <disable_collisions link1="left_finger_pad" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="left_finger_pad" link2="wrist_3_link" reason="Never"/>
+    <disable_collisions link1="right_finger_pad" link2="wrist_1_link" reason="Never"/>
+    <disable_collisions link1="right_finger_pad" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="right_finger_pad" link2="wrist_3_link" reason="Never"/>
+    <disable_collisions link1="shoulder_link" link2="upper_arm_link" reason="Adjacent"/>
+    <disable_collisions link1="wrist_1_link" link2="wrist_2_link" reason="Adjacent"/>
+    <disable_collisions link1="wrist_1_link" link2="wrist_3_link" reason="Never"/>
+    <disable_collisions link1="wrist_2_link" link2="wrist_3_link" reason="Adjacent"/>
+</robot>
