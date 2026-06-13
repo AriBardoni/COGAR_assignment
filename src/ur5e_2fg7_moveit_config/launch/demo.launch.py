@@ -20,7 +20,7 @@ def generate_launch_description():
         object_desc = infp.read()
 
     # 3. Configurazione Semantica di MoveIt (SRDF)
-    srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf') 
+    srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf')
     with open(srdf_file, 'r') as f:
         semantic_content = f.read()
     robot_description_semantic = {'robot_description_semantic': semantic_content}
@@ -35,8 +35,8 @@ def generate_launch_description():
     with open(joint_limits_file, 'r') as f:
         joint_limits_yaml = yaml.safe_load(f)
     robot_description_planning = {'robot_description_planning': joint_limits_yaml}
-    
-    # 5. Configurazione OMPL Pipeline
+
+    # 5. Configurazione OMPL Pipeline (Senza Ruckig per evitare l'errore -100)
     planning_pipeline_config = {
         'planning_pipelines': ['ompl'],
         'default_planning_pipeline': 'ompl',
@@ -49,28 +49,58 @@ def generate_launch_description():
                 'default_planner_request_adapters/FixStartStateCollision',
                 'default_planner_request_adapters/FixStartStatePathConstraints',
                 'default_planner_request_adapters/AddTimeOptimalParameterization',
-                'default_planner_request_adapters/AddRuckigTrajectorySmoothing',
             ]),
             'start_state_max_bounds_error': 0.1,
         }
     }
 
-    # Configurazione per l'esecuzione interna senza ros2_control
-    trajectory_execution_config = {
-        'moveit_manage_controllers': False,
+    # 6. CONFIGURAZIONE FAKE NATIIVA (Funzionante con ros-humble-moveit-plugins)
+    fake_controllers_param = {
+        'moveit_controller_manager': 'moveit_fake_controller_manager/MoveItFakeControllerManager',
+        'fake_initial_joints': {
+            'shoulder_pan_joint': 0.0,
+            'shoulder_lift_joint': -1.5708,
+            'elbow_joint': 0.1,
+            'wrist_1_joint': -1.5708,
+            'wrist_2_joint': 0.0,
+            'wrist_3_joint': 0.0,
+            'gripper_gripper_joint': 0.0
+        },
+        'moveit_fake_controller_manager': {
+            'controller_names': ['ur_manipulator_controller', 'gripper_controller'],
+            'ur_manipulator_controller': {
+                'type': 'fake',
+                'joints': [
+                    'shoulder_pan_joint',
+                    'shoulder_lift_joint',
+                    'elbow_joint',
+                    'wrist_1_joint',
+                    'wrist_2_joint',
+                    'wrist_3_joint'
+                ]
+            },
+            'gripper_controller': {
+                'type': 'fake',
+                'joints': [
+                    'gripper_gripper_joint',
+                    'gripper_right_finger_joint'
+                ]
+            }
+        },
         'trajectory_execution.allowed_execution_duration_scaling': 1.2,
-        'trajectory_execution.allowed_start_tolerance': 0.0,
+        'trajectory_execution.allowed_start_tolerance': 0.01,
+        'moveit_manage_controllers': True
     }
 
     # --- NODI ---
 
-    # STATO DEI GIUNTI: Forza la posizione iniziale in piedi (Niente azzeramenti estranei)
     joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher',
         parameters=[{
             'use_sim_time': False,
+            'source_list': ['/move_group/fake_controller_joint_states'],
             'zeros': {
                 'shoulder_pan_joint': 0.0,
                 'shoulder_lift_joint': -1.5708,
@@ -82,7 +112,6 @@ def generate_launch_description():
         }]
     )
 
-    # Pubblica i link del robot
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -90,31 +119,28 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    # Pubblica la struttura del cilindro
     object_rsp_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="object_state_publisher",
-        output="screen",
+        output='screen',
         parameters=[{"robot_description": object_desc}],
         remappings=[('/robot_description', '/object_description')]
     )
 
-    # Ancoraggio al mondo
     robot_to_world_tf = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "world", "base_link"]
     )
 
-    # Cilindro davanti (Y = 0.5 positivo)
     object_to_world_tf = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=["0.0", "0.5", "0.0", "0.0", "0.0", "0.0", "world", "object_link"]
     )
 
-    # Il Cervello di MoveIt
+    # Il Cervello di MoveIt (Aggiornato con parametri forzati in linea)
     move_group_node = Node(
         package='moveit_ros_move_group',
         executable='move_group',
@@ -125,11 +151,12 @@ def generate_launch_description():
             robot_description_kinematics,
             robot_description_planning,
             planning_pipeline_config,
-            trajectory_execution_config,
+            fake_controllers_param,
+            {"publish_monitored_planning_scene": True},
+            {"use_sim_time": False}
         ]
     )
 
-    # RViz2
     rviz_config = os.path.join(moveit_pkg, 'config', 'moveit.rviz')
     rviz_node = Node(
         package='rviz2',
