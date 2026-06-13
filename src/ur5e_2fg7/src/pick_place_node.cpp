@@ -1,6 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <moveit_msgs/msg/robot_trajectory.hpp>
 #include <memory>
 
 class PickAndPlacePipeline {
@@ -56,23 +57,14 @@ private:
 
     // --- Definizione dei comportamenti richiesti dall'Assignment ---
 
-bool goHome() {
-        RCLCPP_INFO(node_->get_logger(), "Fase: Ritorno in posizione Home...");
-        
-        std::vector<double> joint_group_positions = {0.0, -1.5708, 0.1, -1.5708, 0.0, 0.0};
-        move_group_->setJointValueTarget(joint_group_positions);
-
-        // Usiamo move() direttamente invece di plan + execute.
-        // In modalità fake_components/simulazione pura, move() si occupa di aggiornare lo stato interno.
-        auto success = (move_group_->move() == moveit::core::MoveItErrorCode::SUCCESS);
-        
-        if (success) {
-            RCLCPP_INFO(node_->get_logger(), "Posizione Home raggiunta.");
-            return true;
-        }
-        // Forza comunque il true per non bloccare la pipeline visiva se l'hardware finto si lamenta
-        return true; 
-    }
+    bool goHome() {
+        std::vector<double> home = {0.0, -1.5708, 0.1, -1.5708, 0.0, 0.0};
+        move_group_->setJointValueTarget(home);
+        // Forza MoveIt a ignorare lo stato corrente
+        move_group_->setStartStateToCurrentState();
+        move_group_->move();
+        return true;
+    }   
 
     bool approachObject() {
         RCLCPP_INFO(node_->get_logger(), "Fase: Avvicinamento al cilindro (Pre-Grasp)...");
@@ -104,13 +96,38 @@ bool goHome() {
     }
 
     void liftObject() {
-        RCLCPP_INFO(node_->get_logger(), "Fase: Sollevamento cilindro (Lift)...");
-        // Spostiamo la posa corrente verso l'alto lungo l'asse Z
+    RCLCPP_INFO(node_->get_logger(), "Fase: Sollevamento cilindro...");
+    
+    // Invece di getCurrentPose(), usiamo la posa di approccio + delta Z
+    geometry_msgs::msg::PoseStamped lift_target;
+    lift_target.header.frame_id = "world";
+    lift_target.pose.position.x = 0.2;
+    lift_target.pose.position.y = 0.2;
+    lift_target.pose.position.z = 0.65;  // approccio era 0.5, + 0.15
+    lift_target.pose.orientation.w = 1.0;
+    
+    move_group_->setPoseTarget(lift_target);
+    auto result = move_group_->move();
+    if (result == moveit::core::MoveItErrorCode::SUCCESS) {
+        RCLCPP_INFO(node_->get_logger(), "Sollevamento completato.");
+    } else {
+        RCLCPP_WARN(node_->get_logger(), "Sollevamento fallito - avvio recovery");
+        recoveryBehavior();
     }
+}
 
     void transferObject() {
-        RCLCPP_INFO(node_->get_logger(), "Fase: Trasferimento verso la zona di rilascio (Transfer)...");
-        // Spostiamo il robot di lato per simulare lo spostamento del pezzo
+        RCLCPP_INFO(node_->get_logger(), "Fase: Trasferimento verso zona di rilascio...");
+        
+        geometry_msgs::msg::PoseStamped target;
+        target.header.frame_id = "world";
+        target.pose.position.x = -0.3;
+        target.pose.position.y = 0.3;
+        target.pose.position.z = 0.5;
+        target.pose.orientation.w = 1.0;
+        
+        move_group_->setPoseTarget(target);
+        move_group_->move();
     }
 
     void releaseObject() {

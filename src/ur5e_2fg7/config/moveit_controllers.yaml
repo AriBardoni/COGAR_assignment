@@ -1,13 +1,12 @@
-moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+moveit_controller_manager: moveit_fake_controller_manager/MoveItFakeControllerManager
 
-moveit_simple_controller_manager:
+moveit_fake_controller_manager:
   controller_names:
     - ur_arm_controller
     - gripper_position_controller
 
   ur_arm_controller:
-    type: FollowJointTrajectory
-    action_ns: follow_joint_trajectory
+    type: fake
     default: true
     joints:
       - shoulder_pan_joint
@@ -18,8 +17,7 @@ moveit_simple_controller_manager:
       - wrist_3_joint
 
   gripper_position_controller:
-    type: GripperCommand
-    action_ns: gripper_cmd
+    type: fake
     default: true
     joints:
       - gripper_gripper_joint

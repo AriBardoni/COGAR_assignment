@@ -2,6 +2,7 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5e_con_2fg7">
 
   <xacro:include filename="/opt/ros/humble/share/ur_description/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find ur5e_2fg7)/urdf/ur5e_2fg7.ros2_control.xacro"/>
   <xacro:include filename="$(find onrobot_2fg7_description)/urdf/onrobot_2fg7.xacro"/>
 
   <link name="world"/>
@@ -14,13 +15,15 @@
     kinematics_parameters_file="/opt/ros/humble/share/ur_description/config/ur5e/default_kinematics.yaml"
     physical_parameters_file="/opt/ros/humble/share/ur_description/config/ur5e/physical_parameters.yaml"
     visual_parameters_file="/opt/ros/humble/share/ur_description/config/ur5e/visual_parameters.yaml"
-    initial_positions="${dict(shoulder_pan_joint=0.0,shoulder_lift_joint=-1.57,elbow_joint=1.57,wrist_1_joint=-1.57,wrist_2_joint=-1.57,wrist_3_joint=0.0)}">
+    initial_positions="${dict(shoulder_pan_joint=0.0,shoulder_lift_joint=-1.57,elbow_joint=1.57,wrist_1_joint=-1.57,wrist_2_joint=-1.57,wrist_3_joint=0.0)}"
+    use_fake_hardware="true">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:ur_robot>
 
   <xacro:onrobot_2fg7 parent="tool0" prefix="gripper_">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:onrobot_2fg7>
+  <xacro:IsaacSimSystem name="ur5e_2fg7_system"/>
 
   <material name="pad_black">
     <color rgba="0.1 0.1 0.1 1.0"/>
