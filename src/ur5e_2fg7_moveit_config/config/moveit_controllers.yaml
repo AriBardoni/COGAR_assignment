@@ -1,13 +1,13 @@
-# MoveIt uses this configuration for controller management
+moveit_controller_manager: moveit_fake_controller_manager/MoveItFakeControllerManager
 
-moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
-
-moveit_simple_controller_manager:
+moveit_fake_controller_manager:
   controller_names:
     - ur_manipulator_controller
+    - gripper_controller
 
   ur_manipulator_controller:
-    type: FollowJointTrajectory
+    type: fake
+    default: true
     joints:
       - shoulder_pan_joint
       - shoulder_lift_joint
@@ -15,3 +15,10 @@ moveit_simple_controller_manager:
       - wrist_1_joint
       - wrist_2_joint
       - wrist_3_joint
+
+  gripper_controller:
+    type: fake
+    default: true
+    joints:
+      - gripper_gripper_joint
+      - gripper_right_finger_joint
