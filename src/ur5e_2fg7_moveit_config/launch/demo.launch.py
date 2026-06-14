@@ -12,23 +12,23 @@ def generate_launch_description():
     desc_pkg = get_package_share_directory('ur5e_2fg7')
     moveit_pkg = get_package_share_directory('ur5e_2fg7_moveit_config')
 
-    # 1. Caricamento Robot Description (URDF via Xacro)
+    # 1. Load Robot Description (URDF via Xacro)
     xacro_file = os.path.join(desc_pkg, 'urdf', 'ur5e_2fg7_main.urdf.xacro')
     robot_description_content = Command(['xacro ', xacro_file])
     robot_description = {'robot_description': robot_description_content}
 
-    # 2. Caricamento dell'URDF del Cilindro (Target Object)
+    # 2. Load Cylinder URDF (Target Object)
     object_urdf_file = os.path.join(desc_pkg, 'urdf', 'target_object.urdf')
     with open(object_urdf_file, 'r') as infp:
         object_desc = infp.read()
 
-    # 3. Configurazione Semantica di MoveIt (SRDF)
+    # 3. MoveIt Semantic Configuration (SRDF)
     srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf')
     with open(srdf_file, 'r') as f:
         semantic_content = f.read()
     robot_description_semantic = {'robot_description_semantic': semantic_content}
 
-    # 4. Parametri di cinematica e limiti di giunto
+    # 4. Kinematics parameters and joint limits
     kinematics_file = os.path.join(moveit_pkg, 'config', 'kinematics.yaml')
     with open(kinematics_file, 'r') as f:
         kinematics_yaml = yaml.safe_load(f)
@@ -39,7 +39,7 @@ def generate_launch_description():
         joint_limits_yaml = yaml.safe_load(f)
     robot_description_planning = {'robot_description_planning': joint_limits_yaml}
 
-    # 5. Configurazione OMPL Pipeline
+    # 5. OMPL Pipeline Configuration
     planning_pipeline_config = {
         'planning_pipelines': ['ompl'],
         'default_planning_pipeline': 'ompl',
@@ -57,7 +57,7 @@ def generate_launch_description():
         }
     }
 
-    # 6. Configurazione Controller Manager (MoveIt -> Simple Controller Manager)
+    # 6. Controller Manager Configuration (MoveIt -> Simple Controller Manager)
     moveit_controllers_config = {
         'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager',
         'moveit_simple_controller_manager': {
@@ -92,12 +92,12 @@ def generate_launch_description():
         'trajectory_execution.allowed_start_tolerance': 0.01,
     }
 
-    # File dei controller per ros2_control
+    # Controller configuration file for ros2_control
     ros2_controllers_file = os.path.join(moveit_pkg, 'config', 'ros2_controllers.yaml')
 
-    # --- NODI ---
+    # NODES 
 
-    # ros2_control_node: il nodo che gestisce l'hardware (mock) e i controller
+    # ros2_control_node: Handles the hardware interface (mock) and active controllers
     ros2_control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
@@ -105,7 +105,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Spawner per joint_state_broadcaster
+    # Spawner for joint_state_broadcaster
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -113,7 +113,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Spawner per il controller del braccio
+    # Spawner for the arm controller
     arm_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -121,7 +121,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Spawner per il controller della pinza
+    # Spawner for the gripper controller
     gripper_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
@@ -129,7 +129,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Pubblica i link del robot
+    # Publish robot transforms and links
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -137,31 +137,31 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    # Pubblica la struttura del cilindro
+    # Publish target cylinder transforms and links
     object_rsp_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        name="object_state_publisher",
-        output="screen",
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='object_state_publisher',
+        output='screen',
         parameters=[{"robot_description": object_desc}],
         remappings=[('/robot_description', '/object_description')]
     )
 
-    # Ancoraggio al mondo
+    # Static transform linking the robot base to the world frame
     robot_to_world_tf = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=["0", "0", "0", "0", "0", "0", "world", "base_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['0', '0', '0', '0', '0', '0', 'world', 'base_link']
     )
 
-    # Cilindro davanti (Y = 0.5 positivo)
+    # Static transform for the target cylinder in front of the robot (positive Y = 0.5)
     object_to_world_tf = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=["0.0", "0.5", "0.0", "0.0", "0.0", "0.0", "world", "object_link"]
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['0.0', '0.5', '0.0', '0.0', '0.0', '0.0', 'world', 'object_link']
     )
 
-    # Il Cervello di MoveIt
+    # MoveIt MoveGroup Node (The main planning pipeline)
     move_group_node = Node(
         package='moveit_ros_move_group',
         executable='move_group',
@@ -178,7 +178,7 @@ def generate_launch_description():
         ]
     )
 
-    # RViz2
+    # RViz2 Visualizer
     rviz_config = os.path.join(moveit_pkg, 'config', 'moveit.rviz')
     rviz_node = Node(
         package='rviz2',
@@ -200,7 +200,7 @@ def generate_launch_description():
         robot_to_world_tf,
         object_to_world_tf,
         joint_state_broadcaster_spawner,
-        # Avvia gli spawner del braccio e della pinza solo dopo il joint_state_broadcaster
+        # Start arm and gripper spawners only after the joint_state_broadcaster exits successfully
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
