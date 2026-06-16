@@ -5,28 +5,32 @@ from launch.substitutions import Command
 from launch_ros.actions import Node
 import yaml
 
+
 def generate_launch_description():
     desc_pkg = get_package_share_directory('ur5e_2fg7')
     moveit_pkg = get_package_share_directory('ur5e_2fg7_moveit_config')
 
-    # 1. Carica l'URDF (Robot Description)
+    # 1. Load the URDF (Robot Description)
     xacro_file = os.path.join(desc_pkg, 'urdf', 'ur5e_2fg7_main.urdf.xacro')
     robot_description_content = Command(['xacro ', xacro_file])
     robot_description = {'robot_description': robot_description_content}
 
-    # 2. Carica l'SRDF (Semantic Description)
-    srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf') 
+    # 2. Load the SRDF (Semantic Description)
+    srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf')
     with open(srdf_file, 'r') as f:
         semantic_content = f.read()
     robot_description_semantic = {'robot_description_semantic': semantic_content}
 
-    # 3. Carica la cinematica
+    # 3. Load kinematics parameters
     kinematics_file = os.path.join(moveit_pkg, 'config', 'kinematics.yaml')
     with open(kinematics_file, 'r') as f:
         kinematics_yaml = yaml.safe_load(f)
     robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
-    # Avvia il TUO nodo C++ passandogli tutti i parametri del robot richiesti!
+    # Launch the pipeline node, passing it all required MoveIt robot parameters.
+    # NOTE: this node now also publishes the dynamic TF for object_link
+    # (it replaces the static_transform_publisher used for the cylinder in
+    # demo.launch.py: once the object is grasped, its TF follows tool0).
     pipeline_node = Node(
         package='ur5e_2fg7',
         executable='pick_place_pipeline_node',

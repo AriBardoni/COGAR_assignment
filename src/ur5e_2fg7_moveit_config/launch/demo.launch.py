@@ -95,7 +95,7 @@ def generate_launch_description():
     # Controller configuration file for ros2_control
     ros2_controllers_file = os.path.join(moveit_pkg, 'config', 'ros2_controllers.yaml')
 
-    # NODES 
+    # NODES
 
     # ros2_control_node: Handles the hardware interface (mock) and active controllers
     ros2_control_node = Node(
@@ -147,18 +147,11 @@ def generate_launch_description():
         remappings=[('/robot_description', '/object_description')]
     )
 
-    # Static transform linking the robot base to the world frame
+    # Anchor the robot base to the world frame
     robot_to_world_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         arguments=['0', '0', '0', '0', '0', '0', 'world', 'base_link']
-    )
-
-    # Static transform for the target cylinder in front of the robot (positive Y = 0.5)
-    object_to_world_tf = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        arguments=['0.0', '0.5', '0.0', '0.0', '0.0', '0.0', 'world', 'object_link']
     )
 
     # MoveIt MoveGroup Node (The main planning pipeline)
@@ -198,7 +191,6 @@ def generate_launch_description():
         rsp_node,
         object_rsp_node,
         robot_to_world_tf,
-        object_to_world_tf,
         joint_state_broadcaster_spawner,
         # Start arm and gripper spawners only after the joint_state_broadcaster exits successfully
         RegisterEventHandler(
