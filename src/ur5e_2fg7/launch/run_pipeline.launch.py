@@ -27,10 +27,6 @@ def generate_launch_description():
         kinematics_yaml = yaml.safe_load(f)
     robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
-    # Launch the pipeline node, passing it all required MoveIt robot parameters.
-    # NOTE: this node now also publishes the dynamic TF for object_link
-    # (it replaces the static_transform_publisher used for the cylinder in
-    # demo.launch.py: once the object is grasped, its TF follows tool0).
     pipeline_node = Node(
         package='ur5e_2fg7',
         executable='pick_place_pipeline_node',

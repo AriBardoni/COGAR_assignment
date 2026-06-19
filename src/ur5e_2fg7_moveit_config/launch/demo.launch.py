@@ -53,7 +53,12 @@ def generate_launch_description():
                 'default_planner_request_adapters/FixStartStatePathConstraints',
                 'default_planner_request_adapters/AddTimeOptimalParameterization',
             ]),
+            'simplify_solutions': True,
+            'minimum_waypoint_count': 10,
             'start_state_max_bounds_error': 0.1,
+            'planner_configs': {
+                'RRTConnect': {'range': 0.0}
+            },
         }
     }
 
