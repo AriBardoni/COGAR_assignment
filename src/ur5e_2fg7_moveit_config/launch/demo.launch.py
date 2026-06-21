@@ -54,10 +54,12 @@ def generate_launch_description():
                 'default_planner_request_adapters/AddTimeOptimalParameterization',
             ]),
             'simplify_solutions': True,
-            'minimum_waypoint_count': 10,
+            'minimum_waypoint_count': 24, # Più waypoint = traiettorie ricampionate molto più morbide
             'start_state_max_bounds_error': 0.1,
             'planner_configs': {
-                'RRTConnect': {'range': 0.0}
+                'RRTConnect': {'range': 0.02}, # Ridotto drasticamente da 0.2 a 0.02 per passi controllati
+                'TRRT': {'range': 0.02, 'goal_bias': 0.05},
+                'RRTstar': {'range': 0.02, 'goal_bias': 0.05}
             },
         }
     }
