@@ -1,0 +1,63 @@
+[INFO] [launch]: All log files can be found below /home/arianna/.ros/log/2026-06-22-13-38-25-277916-arianna-virtual-machine-5690
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [pick_place_pipeline_node-1]: process started with pid [5693]
+[pick_place_pipeline_node-1] [INFO] [1782128305.586870849] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00234019 seconds
+[pick_place_pipeline_node-1] [INFO] [1782128305.586991212] [moveit_robot_model.robot_model]: Loading robot model 'ur5e_con_2fg7'...
+[pick_place_pipeline_node-1] [INFO] [1782128308.438556485] [move_group_interface]: Ready to take commands for planning group ur_manipulator.
+[pick_place_pipeline_node-1] [INFO] [1782128308.451080095] [pick_place_pipeline_node]: Waiting for gripper action server...
+[pick_place_pipeline_node-1] [INFO] [1782128308.451215169] [pick_place_pipeline_node]: Gripper action server connected.
+[pick_place_pipeline_node-1] [INFO] [1782128308.455742620] [pick_place_pipeline_node]: Cylinder added to planning scene as collision object.
+[pick_place_pipeline_node-1] [INFO] [1782128308.455801607] [pick_place_pipeline_node]: Pick-and-Place pipeline initialized successfully!
+[pick_place_pipeline_node-1] [INFO] [1782128308.455812322] [pick_place_pipeline_node]: === STARTING CLEAN PIPELINE (CARTESIAN TRAJECTORY) ===
+[pick_place_pipeline_node-1] [INFO] [1782128308.455898315] [pick_place_pipeline_node]: Gripper opening (position: 0.0305 m)
+[pick_place_pipeline_node-1] [INFO] [1782128310.007053486] [pick_place_pipeline_node]: Gripper opening completed.
+[pick_place_pipeline_node-1] [INFO] [1782128310.507527215] [pick_place_pipeline_node]: Phase: Returning to Up configuration pose...
+[pick_place_pipeline_node-1] [INFO] [1782128310.509523085] [move_group_interface]: Plan and Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128310.512795893] [move_group_interface]: Plan and Execute request complete!
+[pick_place_pipeline_node-1] [INFO] [1782128310.513395741] [pick_place_pipeline_node]: Up position reached.
+[pick_place_pipeline_node-1] [INFO] [1782128312.514038695] [pick_place_pipeline_node]: Pre-Grasp - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128312.546842037] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128316.331785177] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128316.332238494] [pick_place_pipeline_node]: Pre-Grasp (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128317.332612470] [pick_place_pipeline_node]: Descent to grasp - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128317.337189821] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128318.871703759] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128318.872465637] [pick_place_pipeline_node]: Descent to grasp (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128319.872795543] [pick_place_pipeline_node]: Grasp attempt 1/2
+[pick_place_pipeline_node-1] [INFO] [1782128319.873021396] [pick_place_pipeline_node]: Phase: Force-Based Grasp (OnRobot 2FG7)...
+[pick_place_pipeline_node-1] [INFO] [1782128319.873044206] [pick_place_pipeline_node]: Closing gripper - target force: 20.0 N, grasp position: 0.0150 m
+[pick_place_pipeline_node-1] [INFO] [1782128319.873298048] [pick_place_pipeline_node]: Gripper closing (grasp) (position: 0.0150 m)
+[pick_place_pipeline_node-1] [INFO] [1782128321.425151237] [pick_place_pipeline_node]: Gripper closing (grasp) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128321.426929212] [pick_place_pipeline_node]: Cylinder attached to end-effector (tool0).
+[pick_place_pipeline_node-1] [INFO] [1782128321.426977475] [pick_place_pipeline_node]: Grasp verified: object held with simulated force 20.0 N
+[pick_place_pipeline_node-1] [INFO] [1782128322.430030363] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128323.111906698] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128323.113025062] [pick_place_pipeline_node]: Lift test for grasp verification (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128323.113188673] [pick_place_pipeline_node]: Grasp successfully verified at attempt 1.
+[pick_place_pipeline_node-1] [INFO] [1782128324.113592180] [pick_place_pipeline_node]: Phase: Controlled vertical lifting of the cylinder...
+[pick_place_pipeline_node-1] [INFO] [1782128324.113813298] [pick_place_pipeline_node]: Lift - intermediate waypoint - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128324.117867384] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128325.002264638] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128325.002585636] [pick_place_pipeline_node]: Lift - intermediate waypoint (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128325.002711124] [pick_place_pipeline_node]: Lift - final height - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128325.009751980] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128326.541563828] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128326.541974645] [pick_place_pipeline_node]: Lift - final height (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128327.542374214] [pick_place_pipeline_node]: Transfer to Release Zone - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128327.563466265] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128330.451441089] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128330.452030675] [pick_place_pipeline_node]: Transfer to Release Zone (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128331.452493637] [pick_place_pipeline_node]: Phase: Object release...
+[pick_place_pipeline_node-1] [INFO] [1782128331.455214567] [pick_place_pipeline_node]: Cylinder released at current position.
+[pick_place_pipeline_node-1] [INFO] [1782128331.455617034] [pick_place_pipeline_node]: Gripper opening (position: 0.0305 m)
+[pick_place_pipeline_node-1] [INFO] [1782128333.007540169] [pick_place_pipeline_node]: Gripper opening completed.
+[pick_place_pipeline_node-1] [INFO] [1782128334.008237390] [pick_place_pipeline_node]: Post-release retreat - attempt 1/3
+[pick_place_pipeline_node-1] [INFO] [1782128334.014194868] [move_group_interface]: Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128335.152199159] [move_group_interface]: Execute request success!
+[pick_place_pipeline_node-1] [INFO] [1782128335.152732051] [pick_place_pipeline_node]: Post-release retreat (Linear Cartesian) completed.
+[pick_place_pipeline_node-1] [INFO] [1782128335.653021712] [pick_place_pipeline_node]: Phase: Returning to Up configuration pose...
+[pick_place_pipeline_node-1] [INFO] [1782128335.654351542] [move_group_interface]: Plan and Execute request accepted
+[pick_place_pipeline_node-1] [INFO] [1782128339.081811577] [move_group_interface]: Plan and Execute request complete!
+[pick_place_pipeline_node-1] [INFO] [1782128339.082373556] [pick_place_pipeline_node]: Up position reached.
+[pick_place_pipeline_node-1] [INFO] [1782128339.082404802] [pick_place_pipeline_node]: === PIPELINE COMPLETED SUCCESSFULLY ===
+[INFO] [pick_place_pipeline_node-1]: process has finished cleanly [pid 5693]

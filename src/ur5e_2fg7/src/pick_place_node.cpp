@@ -120,6 +120,13 @@ public:
             recoveryBehavior();
             return;
         }
+
+        // TEST FOR SAFE RETREAT, TRANSFER ZONE IMPOSSIBLE TO REACH 
+        /*bool transfer_ok = moveToPoseWithRetry(5.0, 5.0, 5.0, "Transfer to Release Zone");  // fuori workspace
+        if (!transfer_ok) {
+            recoveryBehavior();
+            return;
+        }*/
         rclcpp::sleep_for(std::chrono::seconds(1));
 
         // 7. Release: Cylinder release
@@ -478,6 +485,34 @@ private:
         }
         return false;
     }
+
+    // TEST FOR GRASP RETRY, THIS CODE MAKES THE SIMULATION FAIL ON THE FIRST ATTEMPT
+    /*bool graspWithRetry(int max_attempts = 2) {
+    for (int attempt = 1; attempt <= max_attempts; ++attempt) {
+        RCLCPP_INFO(node_->get_logger(), "Grasp attempt %d/%d", attempt, max_attempts);
+        executeForceGrasp();
+        rclcpp::sleep_for(std::chrono::seconds(1));
+
+        // SCENARIO B TEST: force first attempt to fail
+        bool lift_ok = moveToPose(object_fixed_x_, object_fixed_y_, 0.25, "Lift test for grasp verification");
+        
+        if (lift_ok && attempt > 1) {  // solo dal 2° tentativo in poi
+            RCLCPP_INFO(node_->get_logger(), "Grasp successfully verified at attempt %d.", attempt);
+            return true;
+        }
+        if (lift_ok && attempt == 1) {
+            // simula fallimento al 1° tentativo
+            RCLCPP_WARN(node_->get_logger(), "Grasp verification failed (simulated) - releasing and retrying...");
+        } else {
+            RCLCPP_WARN(node_->get_logger(), "Grasp verification failed - releasing and retrying...");
+        }
+        detachObjectFromGripper();
+        openGripper();
+        rclcpp::sleep_for(std::chrono::milliseconds(500));
+        moveToPose(object_fixed_x_, object_fixed_y_, 0.22, "Repositioning for new attempt");
+        }
+        return false;
+    }*/
 
     bool goHome() {
         RCLCPP_INFO(node_->get_logger(), "Phase: Returning to Up configuration pose...");
