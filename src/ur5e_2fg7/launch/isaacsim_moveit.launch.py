@@ -6,23 +6,19 @@ from launch.substitutions import Command
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    # 1. Percorsi ai pacchetti
     desc_pkg = get_package_share_directory('ur5e_2fg7')
     moveit_pkg = get_package_share_directory('config_moveit')
 
-    # 2. Carica l'URDF
     xacro_file = os.path.join(desc_pkg, 'urdf', 'ur5e_2fg7_main.urdf.xacro')
     initial_positions_file = os.path.join(desc_pkg, 'config', 'initial_positions.yaml')
     robot_description_content = Command(['xacro ', xacro_file, ' initial_positions_file:=', initial_positions_file])
     robot_description = {'robot_description': robot_description_content}
 
-    # 3. Carica l'SRDF (le regole di collisione generate dal Setup Assistant)
     srdf_file = os.path.join(moveit_pkg, 'config', 'ur5e_con_2fg7.srdf') 
     with open(srdf_file, 'r') as f:
         semantic_content = f.read()
     robot_description_semantic = {'robot_description_semantic': semantic_content}
 
-    # 4. Carica la configurazione cinematica
     kinematics_file = os.path.join(moveit_pkg, 'config', 'kinematics.yaml')
     with open(kinematics_file, 'r') as f:
         kinematics_yaml = yaml.safe_load(f)
@@ -33,7 +29,6 @@ def generate_launch_description():
         joint_limits_yaml = yaml.safe_load(f)
     robot_description_planning = {'robot_description_planning': joint_limits_yaml}
     
-    # 5. I file dei controller che abbiamo scritto noi!
     ros2_controllers_file = os.path.join(desc_pkg, 'config', 'ros2_controllers.yaml')
     
     moveit_controllers_file = os.path.join(desc_pkg, 'config', 'moveit_controllers.yaml')
@@ -58,9 +53,6 @@ def generate_launch_description():
         }
     }
 
-    # --- NODI DA AVVIARE ---
-
-    # A. Robot State Publisher (fondamentale per le trasformate 3D)
     rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -68,7 +60,6 @@ def generate_launch_description():
         parameters=[robot_description]
     )
 
-    # B. Move Group (Il "cervello" di MoveIt)
     joint_limits_file = os.path.join(moveit_pkg, 'config', 'joint_limits.yaml')
 
     move_group_node = Node(
@@ -87,7 +78,6 @@ def generate_launch_description():
         ]
     )
 
-    # C. RViz2 (L'interfaccia grafica)
     rviz_config = os.path.join(moveit_pkg, 'config', 'moveit.rviz')
     rviz_node = Node(
         package='rviz2',
@@ -114,7 +104,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    # E. Gli Spawners (Accendono i singoli controller)
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",

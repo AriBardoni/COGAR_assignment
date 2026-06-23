@@ -127,6 +127,7 @@ public:
             recoveryBehavior();
             return;
         }*/
+        
         rclcpp::sleep_for(std::chrono::seconds(1));
 
         // 7. Release: Cylinder release
@@ -161,9 +162,7 @@ private:
     std::atomic<bool> is_grasped_;
     tf2::Transform grasp_offset_;
 
-    // -------------------------------------------------------------------------
     // COLLISION SCENE MANAGEMENT
-    // -------------------------------------------------------------------------
 
     void addCylinderToScene() {
         moveit_msgs::msg::CollisionObject cylinder;
@@ -226,9 +225,7 @@ private:
         planning_scene_interface_->applyCollisionObject(cylinder);
     }
 
-    // -------------------------------------------------------------------------
     // DYNAMIC TF MANAGEMENT
-    // -------------------------------------------------------------------------
 
     void publishObjectTransform() {
         geometry_msgs::msg::TransformStamped t;
@@ -299,9 +296,7 @@ private:
         RCLCPP_INFO(node_->get_logger(), "Cylinder released at current position.");
     }
 
-    // -------------------------------------------------------------------------
     // GRIPPER CONTROL
-    // -------------------------------------------------------------------------
 
     void sendGripperCommand(double position_m, const std::string& label) {
         if (!gripper_action_client_->action_server_is_ready()) {
@@ -360,9 +355,7 @@ private:
         openGripper();
     }
 
-    // -------------------------------------------------------------------------
-    // MOTION PLANNING AND EXECUTION (CARTESIAN FIXED)
-    // -------------------------------------------------------------------------
+    // MOTION PLANNING AND EXECUTION 
 
     geometry_msgs::msg::Quaternion getDownwardOrientation() {
         tf2::Quaternion q;
@@ -392,7 +385,6 @@ private:
         move_group_->clearPathConstraints();
     }
 
-    // NEW IMPLEMENTATION: Forces a pure linear Cartesian trajectory to avoid anomalous rotations
     bool moveToPose(double x, double y, double z, const std::string& label) {
         geometry_msgs::msg::Pose target_pose;
         target_pose.position.x = x;
